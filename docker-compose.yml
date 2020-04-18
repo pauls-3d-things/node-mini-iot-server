@@ -1,22 +1,25 @@
 version: '2'
 
 services:
-  app:
+  grafana:
+    restart: always
+    image: grafana/grafana
+    user: "1000"
+    ports:
+      - 3001:3000
+    volumes:
+      - ./grafana-data:/var/lib/grafana
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-simple-json-datasource
+    links:
+      - "miniiot:iot"
+
+  miniiot:
+    restart: always
     image: uvwxy/mini-iot-server
+    user: "1000"
     volumes:
       - ./data/:/usr/src/app/data/
     ports:
       - 8001:8000
-    restart: always
 
-  grafana:
-    image: grafana/grafana
-    ports:
-      - 3000:3000
-    volumes:
-      - grafana-storage:/var/lib/grafana
-    environment:
-      - GF_INSTALL_PLUGINS=grafana-simple-json-datasource
-
-volumes:
-  grafana-storage:

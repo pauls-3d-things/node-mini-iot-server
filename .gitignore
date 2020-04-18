@@ -2,3 +2,5 @@ node_modules/
 dist/
 data/
 test/
+.DS_Store
+grafana-data/
