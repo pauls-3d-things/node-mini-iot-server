@@ -4,9 +4,9 @@ services:
   grafana:
     restart: always
     image: grafana/grafana
-    user: "1000"
+    user: "1000" # maybe you dont need this
     ports:
-      - 3001:3000
+      - 3000:3000
     volumes:
       - ./grafana-data:/var/lib/grafana
     environment:
@@ -17,7 +17,7 @@ services:
   miniiot:
     restart: always
     image: uvwxy/mini-iot-server
-    user: "1000"
+    user: "1000" # maybe you dont need this
     volumes:
       - ./data/:/usr/src/app/data/
     ports:
