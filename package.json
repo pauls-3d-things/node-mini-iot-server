@@ -4,6 +4,7 @@
   "description": "A mini IoT Server",
   "main": "src/main.js",
   "scripts": {
+    "build": "npm run compile",
     "compile": "tsc",
     "start": "node dist/main.js"
   },

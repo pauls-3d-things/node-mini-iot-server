@@ -1,5 +1,6 @@
 import { MiniIotConfig } from "./main-api";
 import * as fs from "fs";
+import * as path from "path";
 
 export const checkConfig = (config: MiniIotConfig): MiniIotConfig => {
     // the slash is not part of the file name...
@@ -7,8 +8,8 @@ export const checkConfig = (config: MiniIotConfig): MiniIotConfig => {
         config.dataDir = config.dataDir.substr(0, config.dataDir.length - 1)
     }
 
-    if (!fs.existsSync(config.dataDir)) {
-        throw new Error("config.dataDir: " + config.dataDir + " doest not exist!");
+    if (!fs.existsSync(path.normalize(config.dataDir))) {
+        fs.mkdirSync(path.normalize(config.dataDir));
     }
 
     return config;
