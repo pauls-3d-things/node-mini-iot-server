@@ -1,6 +1,8 @@
 import { Request, Response, Router, response } from "express";
 import { RouteFactory, MiniIotConfig, CSVDescriptor, CSVColumnDescriptor } from "../main-api";
 import * as fs from "fs";
+import * as path from "path";
+
 
 // https://grafana.com/grafana/plugins/grafana-simple-json-datasource
 
@@ -14,7 +16,7 @@ const setCORSHeaders = (res: Response) => {
 
 const getCSVDescriptor = (filePath: string) => {
     // if there is no descriptor, create one. easier to edit later on
-    const descrPath = filePath + ".descr.json";
+    const descrPath = path.normalize(filePath + ".descr.json");
     if (fs.existsSync(descrPath)) {
         const descr = JSON.parse(fs.readFileSync(descrPath, { encoding: "UTF-8" })) as CSVDescriptor;
         return descr;
@@ -40,8 +42,9 @@ const getCSVDescriptor = (filePath: string) => {
 }
 
 const getCSV = (filePath: string) => {
-    if (fs.existsSync(filePath)) {
-        const data = fs.readFileSync(filePath, { encoding: "UTF-8" });
+    const fPath = path.normalize(filePath);
+    if (fs.existsSync(fPath)) {
+        const data = fs.readFileSync(fPath, { encoding: "UTF-8" });
         const result = data
             .split("\n") // get lines
             .filter(line => line.length > 0) // non empty lines
@@ -52,7 +55,7 @@ const getCSV = (filePath: string) => {
             })); // map line to column
         return result;
     } else {
-        throw new Error("File not found: " + filePath);
+        throw new Error("File not found: " + fPath);
     }
 }
 
@@ -76,8 +79,6 @@ const createDataPointMap = (descr: CSVDescriptor, data: number[][], from?: numbe
             }
         });
     });
-
-    // console.log("Data: ", data.length, "=>", filterdedData.length);
 
     return dataPoints;
 }
@@ -123,7 +124,7 @@ export const CsvToGrafanaRoute: RouteFactory = {
                 res.status(400).end();
             }
 
-            const filePath = config.dataDir + "/" + req.params.uuid + "/" + req.params.file;
+            const filePath = path.normalize(config.dataDir + "/" + req.params.uuid + "/" + req.params.file);
             if (!fs.existsSync(filePath)) {
                 res.status(404).end();
             }
@@ -136,7 +137,7 @@ export const CsvToGrafanaRoute: RouteFactory = {
             // TODO: support search parameters
 
             // return a result of targets
-            const filePath = config.dataDir + "/" + req.params.uuid + "/" + req.params.file;
+            const filePath = path.normalize(config.dataDir + "/" + req.params.uuid + "/" + req.params.file);
             const descr = getCSVDescriptor(filePath);
 
             if (descr) {
@@ -166,7 +167,7 @@ export const CsvToGrafanaRoute: RouteFactory = {
             console.log(req.url);
             // console.log(req.body);
 
-            const filePath = config.dataDir + "/" + req.params.uuid + "/" + req.params.file;
+            const filePath = path.normalize(config.dataDir + "/" + req.params.uuid + "/" + req.params.file);
 
             var tsResult: GrafanaTableResponse | GrafanaTimeserieResponse = [];
 

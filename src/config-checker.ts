@@ -10,6 +10,9 @@ export const checkConfig = (config: MiniIotConfig): MiniIotConfig => {
 
     if (!fs.existsSync(path.normalize(config.dataDir))) {
         fs.mkdirSync(path.normalize(config.dataDir));
+        if (!fs.existsSync(path.normalize(config.dataDir))) {
+            throw Error("Could not create " + config.dataDir);
+        }
     }
 
     return config;

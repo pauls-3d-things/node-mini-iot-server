@@ -1,12 +1,13 @@
 import { Request, Response, Router } from "express";
 import { RouteFactory, MiniIotConfig } from "../main-api";
 import * as fs from "fs";
+import * as path from "path";
 
 export const ReadFilesRoute: RouteFactory = {
     register: (config: MiniIotConfig, router: Router) => {
         router.get("/files/:uuid/:file", (req: Request, res: Response) => {
 
-            const filePath = config.dataDir + "/" + req.params.uuid + "/" + req.params.file;
+            const filePath = path.normalize(config.dataDir + "/" + req.params.uuid + "/" + req.params.file);
             if (fs.existsSync(filePath)) {
                 console.log("GET ReadFiles /" + req.params.uuid + "/" + req.params.file);
 
