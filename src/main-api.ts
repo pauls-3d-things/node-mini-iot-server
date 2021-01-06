@@ -7,7 +7,8 @@ export interface RouteFactory {
 export interface MiniIotConfig {
     port: number,
     name: string,
-    dataDir: string
+    dataDir: string,
+    createFolders: boolean
 }
 
 export interface CSVColumnDescriptor {

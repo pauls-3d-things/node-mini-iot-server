@@ -11,8 +11,12 @@ export const WriteFilesRoute: RouteFactory = {
 
             const folder = path.normalize(config.dataDir + "/" + req.params.uuid);
             if (!fs.existsSync(folder)) {
-                console.log("Creating", folder);
-                fs.mkdirSync(folder);
+                if (config.createFolders) {
+                    console.log("Creating", folder);
+                    fs.mkdirSync(folder);
+                } else {
+                    res.status(500).send().end();
+                }
             }
 
             const filePath = path.normalize(config.dataDir + "/" + req.params.uuid + "/" + req.params.file);
